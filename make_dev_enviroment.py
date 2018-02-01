@@ -4,6 +4,7 @@ import sys, os , threading
 import subprocess
 from time import sleep
 
+
 """
 Class helper for colored terminal
 """
@@ -41,12 +42,26 @@ Class to find programs and add to list
 class Find(object):
 
     dict_result = []
+    uid = os.getuid()
+    gid =  os.getgid()
 
     def __init__(self):
         assert self.dict_result is not None, "Dicionario nao pode ser nulo"
 
+
+
+    def _chown(self, path, uid, gid):
+        os.chown(path, uid, gid)
+        for item in os.listdir(path):
+            itempath = os.path.join(path, item)
+            if os.path.isfile(itempath):
+                os.chown(itempath, uid, gid)
+            elif os.path.isdir(itempath):
+                os.chown(itempath, uid, gid)
+                self._chown(itempath, uid, gid)
+
     """
-     Find all installed prograns in system.
+        Find all installed prograns in system.
     """
     def findFile(self, name):
         if isinstance(name, list):
@@ -88,8 +103,8 @@ class Find(object):
                         if not response:
                             subprocess.call([
                                 'dpkg',
-                                 '-i',
-                                  'vscode.deb'
+                                '-i',
+                                'vscode.deb'
                             ])
                             subprocess.call([
                                 'apt',
@@ -98,14 +113,6 @@ class Find(object):
                             ])
                         else:
                             bcolors.printout('Erro ao fazer o download.','Error')
-                            if not response:
-                                subprocess.call([
-                                    'dpkg',
-                                    '-i',
-                                    'vscode.deb'
-                                ])
-                            else:
-                                bcolors.printout('Erro ao fazer o download.', 'Error')
 
                 if x == 'dbeaver':
                     have_deb = os.path.exists('dbeaver.deb')
@@ -133,6 +140,8 @@ class Find(object):
                     if have_deb is True:
                         bcolors.printout("Arquivo eclipse.tar.gz já existe, abortando download", 'Warning')
                         subprocess.call(['tar', 'xfv', 'eclipse.tar.gz'])
+                        bcolors.printout('Corrigindo as permissões do eclipse', 'Warning')
+                        self._chown('eclipse', self.uid, self.gid)
                         bcolors.printout('Programa ' + x + 'foi instalado com sucesso', 'OK')
                     else:
                         response = subprocess.call([
@@ -148,12 +157,15 @@ class Find(object):
                                 'xfv',
                                 'eclipse.tar.gz'
                             ])
-                            bcolors.printout('Programa ' + x + 'foi instalado com sucesso', 'OK')
+
+                            self._chown('eclipse/', self.uid, self.gid)
+                            bcolors.printout('Programa ' + x + ' foi instalado com sucesso', 'OK')
 
                         else:
                             bcolors.printout('Erro ao fazer o download.','Error')
 
                 result = subprocess.call(['apt','install', x , '-y'])
+
                 if result != 0:
                     bcolors.printout('The program ' + x + ' can\'t be installed by apt. Need manual installation', 'Error')
                 else:
