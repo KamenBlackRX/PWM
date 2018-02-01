@@ -106,3 +106,5 @@ ENV/
 eclipse/
 eclipse/*
 
+#Vs code configure
+.vscode/
