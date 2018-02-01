@@ -1,13 +1,18 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-import sys, os , threading
+import sys
+import os
+import threading
 import subprocess
 from time import sleep
 
-"""
-Class helper for colored terminal
-"""
+
 class bcolors:
+
+    """
+    Helper class for colored terminal display
+    """
+
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
     OKGREEN = '\033[92m'
@@ -24,7 +29,10 @@ class bcolors:
             print(bcolors.WARNING + string + bcolors.ENDC)
 
         if level == 'Error':
-            print(bcolors.FAIL + string  + bcolors.ENDC)
+            print(bcolors.FAIL + string + bcolors.ENDC)
+
+        if level == 'OK':
+            print(bcolors.OKGREEN + string + bcolors.ENDC)
 
         if level == 'OK':
             print(bcolors.OKGREEN + string + bcolors.ENDC)
@@ -35,105 +43,135 @@ class bcolors:
         if level == 'BOLD':
             print(bcolors.BOLD + string + bcolors.ENDC)
 
-"""
-Class to find programs and add to list
-"""
-class Find(object):
+
+class Find():
+
+    """
+    Class to find programs and add to list
+    """
 
     dict_result = []
 
     def __init__(self):
-        assert self.dict_result is not None, "Dicionario nao pode ser nulo"
+        pass
 
-    """
-     Find all installed prograns in system.
-    """
+# ----------------------------------------------------------------------
+# Find all installed programs in the system.
+# ----------------------------------------------------------------------
+
     def findFile(self, name):
         if isinstance(name, list):
             for x in name:
                 result = subprocess.call(['which', x])
+
                 if result != 0:
-                    print(bcolors.FAIL + "Program " + x + " not found. Need installation" + bcolors.ENDC)
+                    print(bcolors.FAIL + x + " not found. \
+                    Installation is needed." + bcolors.ENDC)
+
                     self.dict_result.append(x)
+
                 else:
-                    print(bcolors.OKGREEN + "Program " + x + " is found!" + bcolors.ENDC)
+                    print(bcolors.OKGREEN + x + " found!"
+                          + bcolors.ENDC)
+
         else:
             if result != 0:
-                print(bcolors.FAIL + "Program " + name + " not found. Need installation" + bcolors.ENDC)
+                print(bcolors.FAIL + name + " not found. \
+                Installation is needed." + bcolors.ENDC)
                 self.dict_result.append(name)
             else:
-                print(bcolors.OKGREEN + 'Program '+ name + ' is found!' + bcolors.ENDC)
+                print(bcolors.OKGREEN + name + ' found!'
+                      + bcolors.ENDC)
 
-    """
-     Get files for instalation and install on computuer
-    """
+# ----------------------------------------------------------------------
+# Get files for installation and install on computuer
+# --------------------------------------------------------------------
+
     def installFiles(self):
         if isinstance(self.dict_result, list):
             for x in self.dict_result:
-                # -- Packages with deb installer
-                if x == 'code':
-                    have_deb = os.path.exists('vscode.deb')
-                    if have_deb is True:
-                        bcolors.printout("Arquivo vscode.dev já existe, abortando download", 'Warning')
+                if x == 'vscode':
+
+                    if os.path.exists('vscode.deb'):
+
+                        bcolors.printout("The file vscode.dev already exists, \
+                         aborting download", 'Warning')
+
                         subprocess.call(['dpkg', '-i', 'vscode.deb'])
+
                         subprocess.call(['apt', 'install', '-f'])
+
                     else:
-                        response = subprocess.call([
-                            'wget',
-                            '--progress=dot',
-                            'https://az764295.vo.msecnd.net/stable/7c4205b5c6e52a53b81c69d2b2dc8a627abaa0ba/code_1.19.3-1516876437_amd64.deb',
-                            '-O',
-                            'vscode.deb'
-                        ])
-                        if not response:
-                            subprocess.call([
-                                'dpkg',
-                                 '-i',
-                                  'vscode.deb'
-                            ])
-                            subprocess.call([
-                                'apt',
-                                'install',
-                                '-f'
-                            ])
-                        else:
-                            bcolors.printout('Erro ao fazer o download.','Error')
-                            if not response:
-                                subprocess.call([
-                                    'dpkg',
-                                    '-i',
-                                    'vscode.deb'
-                                ])
-                            else:
-                                bcolors.printout('Erro ao fazer o download.', 'Error')
+
+                        response = subprocess.call(
+                            ['wget',
+                             'https://az764295.vo.msecnd.net/stable/7c4205b5c6e52a53b81c69d2b2dc8a627abaa0ba/code_1.19.3-1516876437_amd64.deb',
+                             '-O',
+                             'vscode.deb']
+                        )
+
+                        if response == 0:
+                            subprocess.call(['dpkg', '-i', 'vscode.deb'])
+                            subprocess.call(['apt', 'install', '-f'])
 
                 if x == 'dbeaver':
-                    have_deb = os.path.exists('dbeaver.deb')
-                    if have_deb:
-                        bcolors.printout('Arquivo dbeaver.deb já existe, abortando download', 'Warning')
-                        subprocess.call(['dpkg', '-i', 'dbeaver.deb'])
-                    else:
-                        subprocess.call(['apt', 'install', '-f'])
-                        response = subprocess.call ([
-                            'wget',
-                            '--progress=dot',
-                            'https://dbeaver.jkiss.org/files/dbeaver-ce_latest_amd64.deb', '-O', 'dbeaver.deb'])
+                    if os.path.exists('dbeaver.deb'):
+                        bcolors.printout('The file dbeaver.deb already exists, \
+                        aborting download', 'Warning')
 
-                        if not response:
+                        subprocess.call(['dpkg', '-i', 'dbeaver.deb'])
+
+                        subprocess.call(['apt', 'install', '-f'])
+
+                    else:
+                        response = subprocess.call(
+                            ['wget',
+                             'https://dbeaver.jkiss.org/files/dbeaver-ce_latest_amd64.deb',
+                             '-O',
+                             'dbeaver.deb'
+                             ]
+                        )
+
+                        if response == 0:
+
                             subprocess.call(['dpkg', '-i', 'dbeaver.deb'])
-                            if not response:
-                                subprocess.call(['dpkg', '-i', 'dbeaver.deb'])
-                                subprocess.call(['apt', 'install', '-f'])
-                            else:
-                                bcolors.printout('Erro ao instalar o arquivo, Favor checar manualmente.', 'Error')
+
+                            subprocess.call(['apt', 'install', '-f'])
+
+# Install all pending processes
+            result = subprocess.call(['apt', 'install', x, '-y'])
+
+            if result != 0:
+                bcolors.printout(x + ' can\'t be installed \
+                by apt. Manual installation is needed.', 'Error')
+
+            else:
+                bcolors.printout(x + ' is installed!', 'OK')
+
+                if not response:
+
+                    subprocess.call(['dpkg', '-i', 'dbeaver.deb'])
+
+                    if not response:
+                        subprocess.call(['dpkg', '-i', 'dbeaver.deb'])
+                        subprocess.call(['apt', 'install', '-f'])
+                    else:
+                        bcolors.printout('An error occurred while installing \
+                        the file. Please check manually.', 'Error')
 
                 # -- Packages with tarball
                 if x == 'eclipse-oxygen':
                     have_deb = os.path.exists('eclipse.tar.gz')
+
                     if have_deb is True:
-                        bcolors.printout("Arquivo eclipse.tar.gz já existe, abortando download", 'Warning')
+
+                        bcolors.printout("The file eclipse.tar.gz \
+                        already exists, aborting download", 'Warning')
+
                         subprocess.call(['tar', 'xfv', 'eclipse.tar.gz'])
-                        bcolors.printout('Programa ' + x + 'foi instalado com sucesso', 'OK')
+
+                        bcolors.printout(x + 'was installed \
+                        successfully', 'OK')
                     else:
                         response = subprocess.call([
                             'wget',
@@ -148,16 +186,20 @@ class Find(object):
                                 'xfv',
                                 'eclipse.tar.gz'
                             ])
-                            bcolors.printout('Programa ' + x + 'foi instalado com sucesso', 'OK')
+                            bcolors.printout(x + 'was installed \
+                            successfully', 'OK')
 
                         else:
-                            bcolors.printout('Erro ao fazer o download.','Error')
+                            bcolors.printout('An error occurred when \
+                            downloading the file.', 'Error')
 
-                result = subprocess.call(['apt','install', x , '-y'])
+                result = subprocess.call(['apt', 'install', x, '-y'])
                 if result != 0:
-                    bcolors.printout('The program ' + x + ' can\'t be installed by apt. Need manual installation', 'Error')
+                    bcolors.printout(x + ' can\'t be \
+                    installed by apt. Manual installation is needed.', 'Error')
                 else:
-                    bcolors.printout('Program ' + x + ' is installed!', 'OK')
+                    bcolors.printout(x + ' is installed!', 'OK')
+
 
 if __name__ == "__main__":
 
@@ -166,16 +208,12 @@ if __name__ == "__main__":
 
     program = [
         "git",
-        "pgadmin3",
         "dbeaver",
         "docker",
-        "docker.io",
-        "code",
+        "vscode",
         "openjdk-8-jre",
-        "eclipse-oxygen"
+        "eclipse"
     ]
-
-    bcolors.printout('Database -> OK', 'OKBLUE')
 
     f.findFile(program)
     f.installFiles()
