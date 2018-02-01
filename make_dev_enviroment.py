@@ -42,13 +42,12 @@ Class to find programs and add to list
 class Find(object):
 
     dict_result = []
+
     uid = os.getuid()
-    gid =  os.getgid()
+    gid = os.getgid()
 
     def __init__(self):
         assert self.dict_result is not None, "Dicionario nao pode ser nulo"
-
-
 
     def _chown(self, path, uid, gid):
         os.chown(path, uid, gid)
