@@ -18,6 +18,10 @@ class ConfigureManager(object):
 
 
     def loadFile(self, path):
+        """
+            Load file into File descriptor. Handle all exceptions.
+            @param path String to file path.
+        """
         if self.isFileValid(path):
             print("Can not be null")
         else:
