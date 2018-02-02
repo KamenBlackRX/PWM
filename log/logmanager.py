@@ -5,6 +5,6 @@ from log.logmanager import *
 class LogManager(object):
 
     def __init__(self, *args, **kargs);
-        pass
+        assert args not None, "Args can not be null."
 
 

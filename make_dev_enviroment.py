@@ -2,38 +2,12 @@
 # -*- coding: utf-8 -*-
 import sys, os , threading
 import subprocess
+
+
 from time import sleep
+from output.sysout import sysout
 
-"""
-Class helper for colored terminal
-"""
-class bcolors:
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
 
-    @staticmethod
-    def printout(string, level):
-
-        if level == 'Warning':
-            print(bcolors.WARNING + string + bcolors.ENDC)
-
-        if level == 'Error':
-            print(bcolors.FAIL + string  + bcolors.ENDC)
-
-        if level == 'OK':
-            print(bcolors.OKGREEN + string + bcolors.ENDC)
-
-        if level == 'OKBLUE':
-            print(bcolors.OKBLUE + string + bcolors.ENDC)
-
-        if level == 'BOLD':
-            print(bcolors.BOLD + string + bcolors.ENDC)
 
 """
 Class to find programs and add to list
@@ -53,16 +27,16 @@ class Find(object):
             for x in name:
                 result = subprocess.call(['which', x])
                 if result != 0:
-                    print(bcolors.FAIL + "Program " + x + " not found. Need installation" + bcolors.ENDC)
+                    sysout.printout('Program ' + x + ' not found! Need installation', 'Error')
                     self.dict_result.append(x)
                 else:
-                    print(bcolors.OKGREEN + "Program " + x + " is found!" + bcolors.ENDC)
+                    sysout.printout('Program ' + x + ' is found!', 'OK')
         else:
             if result != 0:
-                print(bcolors.FAIL + "Program " + name + " not found. Need installation" + bcolors.ENDC)
+                sysout.printout('Program ' + name + ' not found! Need installation', 'Error')
                 self.dict_result.append(name)
             else:
-                print(bcolors.OKGREEN + 'Program '+ name + ' is found!' + bcolors.ENDC)
+                sysout.printout('Program '+ name + ' is found!', 'OK')
 
     """
      Get files for instalation and install on computuer
@@ -74,7 +48,7 @@ class Find(object):
                 if x == 'code':
                     have_deb = os.path.exists('vscode.deb')
                     if have_deb is True:
-                        bcolors.printout("Arquivo vscode.dev já existe, abortando download", 'Warning')
+                        sysout.printout("Arquivo vscode.dev já existe, abortando download", 'Warning')
                         subprocess.call(['dpkg', '-i', 'vscode.deb'])
                         subprocess.call(['apt', 'install', '-f'])
                     else:
@@ -97,7 +71,7 @@ class Find(object):
                                 '-f'
                             ])
                         else:
-                            bcolors.printout('Erro ao fazer o download.','Error')
+                            sysout.printout('Erro ao fazer o download.','Error')
                             if not response:
                                 subprocess.call([
                                     'dpkg',
@@ -105,12 +79,12 @@ class Find(object):
                                     'vscode.deb'
                                 ])
                             else:
-                                bcolors.printout('Erro ao fazer o download.', 'Error')
+                                sysout.printout('Erro ao fazer o download.', 'Error')
 
                 if x == 'dbeaver':
                     have_deb = os.path.exists('dbeaver.deb')
                     if have_deb:
-                        bcolors.printout('Arquivo dbeaver.deb já existe, abortando download', 'Warning')
+                        sysout.printout('Arquivo dbeaver.deb já existe, abortando download', 'Warning')
                         subprocess.call(['dpkg', '-i', 'dbeaver.deb'])
                     else:
                         subprocess.call(['apt', 'install', '-f'])
@@ -125,15 +99,15 @@ class Find(object):
                                 subprocess.call(['dpkg', '-i', 'dbeaver.deb'])
                                 subprocess.call(['apt', 'install', '-f'])
                             else:
-                                bcolors.printout('Erro ao instalar o arquivo, Favor checar manualmente.', 'Error')
+                                sysout.printout('Erro ao instalar o arquivo, Favor checar manualmente.', 'Error')
 
                 # -- Packages with tarball
                 if x == 'eclipse-oxygen':
                     have_deb = os.path.exists('eclipse.tar.gz')
                     if have_deb is True:
-                        bcolors.printout("Arquivo eclipse.tar.gz já existe, abortando download", 'Warning')
+                        sysout.printout("Arquivo eclipse.tar.gz já existe, abortando download", 'Warning')
                         subprocess.call(['tar', 'xfv', 'eclipse.tar.gz'])
-                        bcolors.printout('Programa ' + x + 'foi instalado com sucesso', 'OK')
+                        sysout.printout('Programa ' + x + 'foi instalado com sucesso', 'OK')
                     else:
                         response = subprocess.call([
                             'wget',
@@ -148,20 +122,20 @@ class Find(object):
                                 'xfv',
                                 'eclipse.tar.gz'
                             ])
-                            bcolors.printout('Programa ' + x + 'foi instalado com sucesso', 'OK')
+                            sysout.printout('Programa ' + x + 'foi instalado com sucesso', 'OK')
 
                         else:
-                            bcolors.printout('Erro ao fazer o download.','Error')
+                            sysout.printout('Erro ao fazer o download.','Error')
 
                 result = subprocess.call(['apt','install', x , '-y'])
                 if result != 0:
-                    bcolors.printout('The program ' + x + ' can\'t be installed by apt. Need manual installation', 'Error')
+                    sysout.printout('The program ' + x + ' can\'t be installed by apt. Need manual installation', 'Error')
                 else:
-                    bcolors.printout('Program ' + x + ' is installed!', 'OK')
+                    sysout.printout('Program ' + x + ' is installed!', 'OK')
 
 if __name__ == "__main__":
 
-    bcolors.printout('Initalizing database...', 'OK')
+    sysout.printout('Initalizing database...', 'OK')
     f = Find()
 
     program = [
@@ -175,7 +149,7 @@ if __name__ == "__main__":
         "eclipse-oxygen"
     ]
 
-    bcolors.printout('Database -> OK', 'OKBLUE')
+    sysout.printout('Database -> OK', 'OKBLUE')
 
     f.findFile(program)
     f.installFiles()
