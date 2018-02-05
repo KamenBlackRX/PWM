@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 import sys, os , threading
 import subprocess
-
 from time import sleep
 from output.sysout import sysout
 
@@ -15,24 +14,11 @@ class Find(object):
 
     dict_result = []
 
-    uid = os.getuid()
-    gid = os.getgid()
-
     def __init__(self):
         assert self.dict_result is not None, "Dicionario nao pode ser nulo"
 
-    def _chown(self, path, uid, gid):
-        os.chown(path, uid, gid)
-        for item in os.listdir(path):
-            itempath = os.path.join(path, item)
-            if os.path.isfile(itempath):
-                os.chown(itempath, uid, gid)
-            elif os.path.isdir(itempath):
-                os.chown(itempath, uid, gid)
-                self._chown(itempath, uid, gid)
-
     """
-        Find all installed prograns in system.
+     Find all installed prograns in system.
     """
     def findFile(self, name):
         if isinstance(name, list):
@@ -64,7 +50,7 @@ class Find(object):
                         subprocess.call(['dpkg', '-i', 'vscode.deb'])
                         subprocess.call(['apt', 'install', '-f'])
                     else:
-                        response = subprocess.call([
+                        respons+ sysout.ENDCe = subprocess.call([
                             'wget',
                             '--progress=dot',
                             'https://az764295.vo.msecnd.net/stable/7c4205b5c6e52a53b81c69d2b2dc8a627abaa0ba/code_1.19.3-1516876437_amd64.deb',
@@ -74,8 +60,8 @@ class Find(object):
                         if not response:
                             subprocess.call([
                                 'dpkg',
-                                '-i',
-                                'vscode.deb'
+                                 '-i',
+                                  'vscode.deb'
                             ])
                             subprocess.call([
                                 'apt',
@@ -83,7 +69,6 @@ class Find(object):
                                 '-f'
                             ])
                         else:
-
                             sysout.printout('Erro ao fazer o download.','Error')
                             if not response:
                                 subprocess.call([
@@ -120,9 +105,7 @@ class Find(object):
                     if have_deb is True:
                         sysout.printout("Arquivo eclipse.tar.gz já existe, abortando download", 'Warning')
                         subprocess.call(['tar', 'xfv', 'eclipse.tar.gz'])
-
                         sysout.printout('Programa ' + x + 'foi instalado com sucesso', 'OK')
-
                     else:
                         response = subprocess.call([
                             'wget',
@@ -140,12 +123,10 @@ class Find(object):
 
                             sysout.printout('Programa ' + x + 'foi instalado com sucesso', 'OK')
 
-
                         else:
                             sysout.printout('Erro ao fazer o download.','Error')
 
                 result = subprocess.call(['apt','install', x , '-y'])
-
                 if result != 0:
                     sysout.printout('The program ' + x + ' can\'t be installed by apt. Need manual installation', 'Error')
                 else:
