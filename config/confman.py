@@ -1,4 +1,4 @@
-import os
+import os, sys
 import shlex
 
 """
@@ -21,7 +21,7 @@ class ConfigureManager(object):
             @param path -> path from file
         """
         assert args is not None, "Function need have at least one argument."
-        FILE = self.loadFileAsDict(kargs.get('path'))
+        self.FILE = self.loadFileAsDict(kargs.get('path'))
 
 
     def loadFileAsList(self, path):
@@ -54,20 +54,17 @@ class ConfigureManager(object):
         return settings
 
 
-#http://189.41.233.110:4200
-
-
     def isFileValid(self, path):
          print ("Not implemented.")
 
     @staticmethod
-    def getCPUFlag(self):
-        assert self.FILE is None, "Need make.conf file"
-        self.CPU_FLAG = self.FILE.get('CPU_FLAG')
-        return self.CPU_FLAG
+    def getCPUFlag():
+        assert ConfigureManager.FILE is None, "Need make.conf file"
+        ConfigureManager.CPU_FLAG = ConfigureManager.FILE.get('CPU_FLAG')
+        return ConfigureManager.CPU_FLAG
 
     @staticmethod
-    def getCFlags(self):
+    def getCFlags():
         pass
 
     @staticmethod
