@@ -2,8 +2,6 @@
 # -*- coding: utf-8 -*-
 import sys, os , threading
 import subprocess
-
-
 from time import sleep
 from output.sysout import sysout
 
@@ -122,6 +120,7 @@ class Find(object):
                                 'xfv',
                                 'eclipse.tar.gz'
                             ])
+
                             sysout.printout('Programa ' + x + 'foi instalado com sucesso', 'OK')
 
                         else:
