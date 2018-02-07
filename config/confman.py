@@ -20,7 +20,7 @@ class ConfigureManager(object):
             Constructor of class.
             @param path -> path from file
         """
-        assert args is not None, "Function need have at least one argument."
+        assert kargs.get('path') is not None, "Function need have at least one argument."
         self.FILE = self.loadFileAsDict(kargs.get('path'))
 
 
@@ -55,12 +55,14 @@ class ConfigureManager(object):
 
 
     def isFileValid(self, path):
-         print ("Not implemented.")
+        print ("Not implemented.")
 
     @staticmethod
     def getCPUFlag():
-        assert ConfigureManager.FILE is None, "Need make.conf file"
-        ConfigureManager.CPU_FLAG = ConfigureManager.FILE.get('CPU_FLAG')
+        # TO-DO Fix retur with dict not as type.
+        assert ConfigureManager.FILE is not None, "Need make.conf file"
+        d = {}
+        ConfigureManager.CPU_FLAG = ConfigureManager.FILE.get(ConfigureManager, d, 'CPU_FLAG')
         return ConfigureManager.CPU_FLAG
 
     @staticmethod

@@ -4,7 +4,7 @@ import sys, os , threading
 import subprocess
 from time import sleep
 from output.sysout import sysout
-
+from config.confman import ConfigureManager
 
 
 """
@@ -50,7 +50,7 @@ class Find(object):
                         subprocess.call(['dpkg', '-i', 'vscode.deb'])
                         subprocess.call(['apt', 'install', '-f'])
                     else:
-                        respons+ sysout.ENDCe = subprocess.call([
+                        response = subprocess.call([
                             'wget',
                             '--progress=dot',
                             'https://az764295.vo.msecnd.net/stable/7c4205b5c6e52a53b81c69d2b2dc8a627abaa0ba/code_1.19.3-1516876437_amd64.deb',
@@ -134,6 +134,12 @@ class Find(object):
 
 if __name__ == "__main__":
 
+    sysout.printout("Checking dependencies...", 'OK')
+    conf = ConfigureManager(path='config/configuration_test.conf')
+    conf.getCPUFlag()
+
+
+"""
     sysout.printout('Initalizing database...', 'OK')
     f = Find()
 
@@ -152,3 +158,4 @@ if __name__ == "__main__":
 
     f.findFile(program)
     f.installFiles()
+"""
