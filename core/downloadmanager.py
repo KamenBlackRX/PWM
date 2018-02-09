@@ -8,7 +8,7 @@ from config.confman import ConfigureManager
 """
 Class to find programs and add to list
 """
-class Find(object):
+class DownloadManager(object):
 
     dict_result = []
 
@@ -34,8 +34,51 @@ class Find(object):
             else:
                 sysout.printout('Program '+ name + ' is found!', 'OK')
 
+
+
+    def downloadFile(self, link, version, name, path):
+        retval = subprocess.Popen(
+            [
+                "wget",
+                "--progress=dot",
+                link
+                #"-O",
+                #path + name
+            ],
+        ).communicate()
+
+        print (retval[1])
+        if retval > 0:
+            sysout.printout("Error in download file dependencies", 'Error')
+
+    def GetPackageFile(self, **kargs):
+        """
+            Download required source tarballs with thread management
+            @param path
+            @param name
+            @param version
+            @param download_path
+        """
+        assert kargs.get('path') is not None, "The path for download source can't be empty"
+        assert kargs.get('name') is not None, "The name for download source can't be empty"
+        assert kargs.get('version') is not None, "The version for download source can't be empty"
+        assert kargs.get('download_path') is not None, "The link for download source can't be empty"
+
+        path = kargs.get('path')
+        name = kargs.get('name')
+        version = kargs.get('version')
+        download_path = kargs.get('download_path')
+
+        t = threading.Thread(
+            name="DownloadThread",
+            target=self.downloadFile,
+            args=(download_path, version, name,path)
+        )
+        t.start()
+
+
     """
-     Get files for instalation and install on computuer
+        Get files for instalation and install on computuer
     """
     def installFiles(self):
         if isinstance(self.dict_result, list):
@@ -44,7 +87,7 @@ class Find(object):
                 if x == 'code':
                     have_deb = os.path.exists('vscode.deb')
                     if have_deb is True:
-                        sysout.printout("Arquivo vscode.dev já existe, abortando download", 'Warning')
+                        sysout.printout("Arquivo vscode.dev ja existe, abortando download", 'Warning')
                         subprocess.call(['dpkg', '-i', 'vscode.deb'])
                         subprocess.call(['apt', 'install', '-f'])
                     else:
@@ -80,7 +123,7 @@ class Find(object):
                 if x == 'dbeaver':
                     have_deb = os.path.exists('dbeaver.deb')
                     if have_deb:
-                        sysout.printout('Arquivo dbeaver.deb já existe, abortando download', 'Warning')
+                        sysout.printout('Arquivo dbeaver.deb ja existe, abortando download', 'Warning')
                         subprocess.call(['dpkg', '-i', 'dbeaver.deb'])
                     else:
                         subprocess.call(['apt', 'install', '-f'])
@@ -101,7 +144,7 @@ class Find(object):
                 if x == 'eclipse-oxygen':
                     have_deb = os.path.exists('eclipse.tar.gz')
                     if have_deb is True:
-                        sysout.printout("Arquivo eclipse.tar.gz já existe, abortando download", 'Warning')
+                        sysout.printout("Arquivo eclipse.tar.gz ja existe, abortando download", 'Warning')
                         subprocess.call(['tar', 'xfv', 'eclipse.tar.gz'])
                         sysout.printout('Programa ' + x + 'foi instalado com sucesso', 'OK')
                     else:
@@ -129,9 +172,6 @@ class Find(object):
                     sysout.printout('The program ' + x + ' can\'t be installed by apt. Need manual installation', 'Error')
                 else:
                     sysout.printout('Program ' + x + ' is installed!', 'OK')
-
-
-
 
 
 """
