@@ -12,7 +12,7 @@ class sysout:
     UNDERLINE = '\033[4m'
 
     @staticmethod
-    def printout(string, level):
+    def printout(string, level='OK'):
 
         if level == 'Warning':
             print(sysout.WARNING + string + sysout.ENDC)

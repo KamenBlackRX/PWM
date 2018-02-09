@@ -1,5 +1,3 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
 import sys, os , threading
 import subprocess
 from time import sleep
@@ -132,11 +130,8 @@ class Find(object):
                 else:
                     sysout.printout('Program ' + x + ' is installed!', 'OK')
 
-if __name__ == "__main__":
 
-    sysout.printout("Checking dependencies...", 'OK')
-    conf = ConfigureManager(path='config/configuration_test.conf')
-    conf.getCPUFlag()
+
 
 
 """

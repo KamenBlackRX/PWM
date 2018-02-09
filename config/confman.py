@@ -1,5 +1,6 @@
 import os, sys
 import shlex
+from output.sysout import sysout
 
 """
  Configuration Manager for give the interpretor the way how the files will be held.
@@ -7,13 +8,13 @@ import shlex
 class ConfigureManager(object):
 
     FILE = dict
-    CPU_FLAG = str
-    CHOST = str
-    CXXHOST = str
-    CFLAGS = str
-    CXXFLAGS = str
-    MAKE = str
-    USE_FLAG = str
+    CPU_FLAG = None
+    CHOST = None
+    CXXHOST = None
+    CFLAGS = None
+    CXXFLAGS = None
+    MAKE = None
+    USE_FLAG = None
 
     def __init__(self,*args, **kargs):
         """
@@ -57,22 +58,75 @@ class ConfigureManager(object):
     def isFileValid(self, path):
         print ("Not implemented.")
 
-    @staticmethod
-    def getCPUFlag():
-        # TO-DO Fix retur with dict not as type.
-        assert ConfigureManager.FILE is not None, "Need make.conf file"
-        d = {}
-        ConfigureManager.CPU_FLAG = ConfigureManager.FILE.get(ConfigureManager, d, 'CPU_FLAG')
-        return ConfigureManager.CPU_FLAG
 
-    @staticmethod
-    def getCFlags():
-        pass
+    def getCPUFlag(self):
+        """
+            Get the cpu flags from make file and set globaly.
+        """
+        assert self.FILE is not None, "Need make.conf file"
+        self.CPU_FLAG = self.FILE.get('CPUFLAGS')[0]
+        return self.CPU_FLAG
 
-    @staticmethod
+    def getCHOSTFlags(self):
+        """
+            Get the Host GCC flags from make file and set globaly
+        """
+        assert self.FILE is not None, "Need make.conf file"
+        self.CHOST = self.FILE.get('CHOST')[0]
+        return self.CPU_FLAG
+
+    def getCXXHOSTFlags(self):
+        """
+            Get the Host GCC flags from make file and set globaly
+        """
+        assert self.FILE is not None, "Need make.conf file"
+        self.CXXHOST = self.FILE.get('CHOST')[0]
+        return self.CPU_FLAG
+
+    def getCFlags(self):
+        """
+            Get the Host C flags from make file and set globaly
+        """
+        assert self.FILE is not None, "Need make.conf file"
+        self.CFLAGS = self.FILE.get('CFLAGS')[0]
+        return self.CPU_FLAG
+
+
     def getCXXFlags(self):
-        pass
+        """
+            Get the Host C++ flags from make file and set globaly
+        """
+        assert self.FILE is not None, "Need make.conf file"
+        self.CXXFLAGS = self.FILE.get('CXXFLAGS')[0]
+        return self.CPU_FLAG
 
-    @staticmethod
+
     def getMakeOptsFlags(self):
-        pass
+        """
+            Get the Make jobs flag from make file and set globaly
+        """
+        assert self.FILE is not None, "Need make.conf file"
+        self.MAKE = self.FILE.get('MAKEOPTS')[0]
+        return self.CPU_FLAG
+
+
+    def createOutput(self):
+        self.getCHOSTFlags()
+        self.getCXXHOSTFlags()
+        self.getCFlags()
+        self.getCPUFlag()
+        self.getCXXFlags()
+        self.getMakeOptsFlags()
+
+        sysout.printout('---------------------Enabled variables --------------------------\n' +
+                'CHOST: ' + self.CHOST + '\n' +
+                'CXXHOST: ' + self.CXXHOST + '\n' +
+                'CFLAGS: ' + self.CFLAGS + '\n' +
+                'CPU_FLAG: ' + self.CPU_FLAG + '\n' +
+                'CXXFLAGS: ' + self.CXXFLAGS + '\n' +
+                'CXXHOST: ' + self.CXXHOST + '\n'
+        )
+
+
+
+
